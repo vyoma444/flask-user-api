@@ -1,17 +1,16 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from config import Config   # ✅ absolute import
-
-db = SQLAlchemy()
+from app.config import Config
+from app.extensions.db import db
+from app.extensions.jwt import jwt
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
     db.init_app(app)
+    jwt.init_app(app)
 
-    # register routes
-    from routes.user_routes import user_bp   # ✅ absolute import
-    app.register_blueprint(user_bp)
+    from app.routes.auth_routes import auth_bp
+    app.register_blueprint(auth_bp, url_prefix="/auth")
 
     return app
